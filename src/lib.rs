@@ -4,6 +4,7 @@
 //! with cross-platform support planned.
 
 pub mod bandwidth;
+pub mod app_fingerprint;
 pub mod conntrack;
 pub mod dns_sinkhole;
 pub mod doh_monitor;
