@@ -9,6 +9,8 @@ pub mod doh_monitor;
 pub mod dpi;
 pub mod ebpf;
 pub mod egress;
+pub mod monitor;
 pub mod nftables;
 pub mod platform;
 pub mod rules;
+pub mod stats;

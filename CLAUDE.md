@@ -15,6 +15,7 @@ Single crate with the following modules:
 - `doh_monitor` — DNS-over-HTTPS connection monitor with browser/non-browser classification (IMPLEMENTED)
 - `egress` — Per-application egress filtering with default-deny (IMPLEMENTED)
 - `conntrack` — Stateful connection tracking with traffic counters, state machine, and analytics (IMPLEMENTED)
+- `stats` — Aggregated traffic statistics for the firewall dashboard with text/JSON rendering (IMPLEMENTED)
 - `dpi` — Deep packet inspection engine (SCAFFOLD)
 - `ebpf` — eBPF kernel-level filtering integration (SCAFFOLD)
 - `nftables` — nftables backend for netfilter rules (SCAFFOLD)
