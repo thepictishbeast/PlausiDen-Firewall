@@ -17,3 +17,4 @@ pub mod platform;
 pub mod rules;
 pub mod stats;
 pub mod threat_intel;
+pub mod geo_ip;
