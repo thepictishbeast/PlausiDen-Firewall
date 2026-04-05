@@ -11,7 +11,8 @@ This repo is part of PlausiDen (PLAUSIbly DENiable) protection suite — AI-powe
 ## Architecture
 Single crate with the following modules:
 - `rules` — Firewall rule engine with priority ordering and default-deny (IMPLEMENTED)
-- `dns_sinkhole` — DNS sinkhole with wildcard support and default blocklist (IMPLEMENTED)
+- `dns_sinkhole` — DNS sinkhole with wildcard support, default blocklist, DoH bypass detection, TLD blocking, punycode/IDN homograph detection (IMPLEMENTED)
+- `doh_monitor` — DNS-over-HTTPS connection monitor with browser/non-browser classification (IMPLEMENTED)
 - `egress` — Per-application egress filtering with default-deny (IMPLEMENTED)
 - `dpi` — Deep packet inspection engine (SCAFFOLD)
 - `ebpf` — eBPF kernel-level filtering integration (SCAFFOLD)

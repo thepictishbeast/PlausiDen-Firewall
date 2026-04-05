@@ -111,6 +111,7 @@ impl RuleMatch {
     }
 
     /// Check whether the given traffic parameters match this rule's criteria.
+    #[allow(clippy::too_many_arguments)]
     pub fn matches(
         &self,
         source_ip: Option<IpAddr>,
@@ -238,19 +239,19 @@ impl RuleSet {
     /// Allow/Deny action overlaps at the same priority.
     pub fn add_rule(&mut self, rule: FirewallRule) -> Result<(), RuleError> {
         // Validate port ranges.
-        if let Some((lo, hi)) = rule.rule_match.source_port_range {
-            if lo > hi {
-                return Err(RuleError::InvalidRule(format!(
-                    "source port range {lo}-{hi} is inverted"
-                )));
-            }
+        if let Some((lo, hi)) = rule.rule_match.source_port_range
+            && lo > hi
+        {
+            return Err(RuleError::InvalidRule(format!(
+                "source port range {lo}-{hi} is inverted"
+            )));
         }
-        if let Some((lo, hi)) = rule.rule_match.dest_port_range {
-            if lo > hi {
-                return Err(RuleError::InvalidRule(format!(
-                    "dest port range {lo}-{hi} is inverted"
-                )));
-            }
+        if let Some((lo, hi)) = rule.rule_match.dest_port_range
+            && lo > hi
+        {
+            return Err(RuleError::InvalidRule(format!(
+                "dest port range {lo}-{hi} is inverted"
+            )));
         }
 
         // Check for conflicting rules (overlapping match with opposing Allow/Deny at same priority).
@@ -282,6 +283,7 @@ impl RuleSet {
 
     /// Evaluate traffic against the rule set. Returns the action from the first matching rule,
     /// or `RuleAction::Deny` if nothing matches (default-deny).
+    #[allow(clippy::too_many_arguments)]
     pub fn evaluate(
         &self,
         source_ip: Option<IpAddr>,

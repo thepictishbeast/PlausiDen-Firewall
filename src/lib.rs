@@ -4,6 +4,7 @@
 //! with cross-platform support planned.
 
 pub mod dns_sinkhole;
+pub mod doh_monitor;
 pub mod dpi;
 pub mod ebpf;
 pub mod egress;
