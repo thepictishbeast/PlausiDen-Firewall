@@ -3,6 +3,7 @@
 //! Designed for state-level adversary threat models. Linux-first via eBPF/nftables,
 //! with cross-platform support planned.
 
+pub mod bandwidth;
 pub mod conntrack;
 pub mod dns_sinkhole;
 pub mod doh_monitor;
