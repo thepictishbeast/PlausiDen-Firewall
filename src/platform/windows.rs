@@ -1,6 +1,6 @@
 //! Windows Filtering Platform (WFP) backend — rule generation for Windows.
 
-use crate::rules::{FirewallRule, RuleAction, RuleSet};
+use crate::rules::{RuleAction, RuleSet};
 use serde::{Deserialize, Serialize};
 
 /// WFP filter representation.
@@ -132,7 +132,7 @@ mod tests {
                 protocol: None, application: None, domain_pattern: None,
             },
             action: RuleAction::Allow, enabled: true,
-        });
+        }).unwrap();
         let filters = backend.generate_filters(&rules);
         assert!(filters.len() >= 2); // default block + 1 rule
     }

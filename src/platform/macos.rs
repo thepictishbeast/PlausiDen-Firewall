@@ -1,8 +1,6 @@
 //! macOS firewall backend — pf.conf rule generation.
 
 use crate::rules::{FirewallRule, RuleAction, RuleSet};
-use serde::{Deserialize, Serialize};
-
 /// macOS pf.conf rule generator.
 pub struct MacosBackend {
     interface: String,
@@ -58,7 +56,7 @@ impl MacosBackend {
 
         let direction = if m.source_ip.is_some() { "in" } else { "out" };
         parts.push(direction.into());
-        parts.push(format!("on $ext_if"));
+        parts.push("on $ext_if".to_string());
 
         if let Some(ref proto) = m.protocol {
             parts.push(format!("proto {:?}", proto).to_lowercase());
@@ -127,7 +125,7 @@ mod tests {
             },
             action: RuleAction::Allow,
             enabled: true,
-        });
+        }).unwrap();
         let conf = backend.generate_pf_conf(&rules);
         assert!(conf.contains("pass"));
         assert!(conf.contains("93.184.216.34"));

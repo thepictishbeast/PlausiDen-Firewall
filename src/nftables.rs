@@ -132,7 +132,7 @@ mod tests {
     fn test_allow_rule() {
         let backend = NftablesBackend::default();
         let mut rs = RuleSet::new();
-        rs.add_rule(make_rule(RuleAction::Allow, Some("93.184.216.34"), Some(443)));
+        rs.add_rule(make_rule(RuleAction::Allow, Some("93.184.216.34"), Some(443))).unwrap();
         let nft = backend.generate_ruleset(&rs);
         let script = nft.to_script();
         assert!(script.contains("93.184.216.34"));
@@ -144,7 +144,7 @@ mod tests {
     fn test_deny_rule() {
         let backend = NftablesBackend::default();
         let mut rs = RuleSet::new();
-        rs.add_rule(make_rule(RuleAction::Deny, Some("10.0.0.1"), None));
+        rs.add_rule(make_rule(RuleAction::Deny, Some("10.0.0.1"), None)).unwrap();
         let nft = backend.generate_ruleset(&rs);
         assert!(nft.to_script().contains("drop"));
     }
@@ -161,7 +161,7 @@ mod tests {
         let backend = NftablesBackend::default();
         let mut rs = RuleSet::new();
         for i in 0..3 {
-            rs.add_rule(make_rule(RuleAction::Allow, Some(&format!("10.0.0.{i}")), Some(80)));
+            rs.add_rule(make_rule(RuleAction::Allow, Some(&format!("10.0.0.{i}")), Some(80))).unwrap();
         }
         let nft = backend.generate_ruleset(&rs);
         assert!(nft.rule_count() >= 3);

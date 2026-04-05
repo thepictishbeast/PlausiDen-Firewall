@@ -2,8 +2,8 @@
 
 use crate::conntrack::ConnectionTracker;
 use crate::dns_sinkhole::DnsSinkhole;
-use crate::ebpf::{EbpfEngine, EbpfConfig};
-use crate::nftables::{NftablesBackend, TableFamily};
+use crate::ebpf::EbpfEngine;
+use crate::nftables::NftablesBackend;
 use crate::rules::RuleSet;
 use serde::{Deserialize, Serialize};
 
