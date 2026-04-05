@@ -37,7 +37,7 @@ pub enum RuleAction {
 }
 
 /// Network protocol to match against.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Protocol {
     /// Transmission Control Protocol.
     Tcp,

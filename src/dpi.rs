@@ -149,7 +149,7 @@ impl DpiEngine {
             None
         };
 
-        let suspicious = tls_fp.as_ref().map_or(false, |fp| self.is_suspicious_ja3(fp));
+        let suspicious = tls_fp.as_ref().is_some_and(|fp| self.is_suspicious_ja3(fp));
 
         let description = if suspicious {
             format!("Suspicious TLS fingerprint detected on port {dest_port}")
