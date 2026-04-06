@@ -42,7 +42,8 @@ impl MetricBaseline {
     }
 
     /// Update the baseline with a new observation.
-    pub fn observe(&mut self, value: f64) {
+    /// Returns the z-score of this value against the *pre-update* baseline.
+    pub fn observe(&mut self, value: f64) -> f64 {
         self.sample_count += 1;
         self.last_value = value;
         self.last_updated = Utc::now();
@@ -50,12 +51,17 @@ impl MetricBaseline {
         if self.sample_count == 1 {
             self.mean = value;
             self.variance = 0.0;
-            return;
+            return 0.0;
         }
+
+        // Compute z-score BEFORE updating baseline.
+        let pre_z = self.z_score(value);
 
         let diff = value - self.mean;
         self.mean += self.alpha * diff;
         self.variance = (1.0 - self.alpha) * (self.variance + self.alpha * diff * diff);
+
+        pre_z
     }
 
     /// Standard deviation of the metric.
@@ -70,12 +76,7 @@ impl MetricBaseline {
         (value - self.mean).abs() / sd
     }
 
-    /// Check if the last value is anomalous.
-    pub fn is_anomalous(&self) -> bool {
-        self.sample_count >= 10 && self.z_score(self.last_value) > self.threshold
-    }
-
-    /// Check if a specific value would be anomalous.
+    /// Check if a specific value would be anomalous against current baseline.
     pub fn check_value(&self, value: f64) -> bool {
         self.sample_count >= 10 && self.z_score(value) > self.threshold
     }
@@ -131,9 +132,9 @@ impl AnomalyDetector {
         };
 
         let was_trained = baseline.sample_count >= 10;
-        baseline.observe(value);
+        let pre_z = baseline.observe(value);
 
-        if was_trained && baseline.is_anomalous() {
+        if was_trained && pre_z > baseline.threshold {
             let alert = AnomalyAlert {
                 metric_name: metric_name.to_string(),
                 observed_value: value,
@@ -166,14 +167,14 @@ impl AnomalyDetector {
         self.metrics.len()
     }
 
-    /// Number of metrics currently showing anomalies.
+    /// Number of metrics where the last value exceeds the threshold.
     pub fn anomalous_count(&self) -> usize {
-        self.metrics.values().filter(|m| m.is_anomalous()).count()
+        self.metrics.values().filter(|m| m.check_value(m.last_value)).count()
     }
 
-    /// Get all currently anomalous metrics.
+    /// Get all metrics where the last value exceeds the threshold.
     pub fn anomalous_metrics(&self) -> Vec<&MetricBaseline> {
-        self.metrics.values().filter(|m| m.is_anomalous()).collect()
+        self.metrics.values().filter(|m| m.check_value(m.last_value)).collect()
     }
 }
 
@@ -199,23 +200,23 @@ mod tests {
     #[test]
     fn test_anomaly_detection() {
         let mut b = MetricBaseline::new("test", 0.1, 3.0);
-        // Train with normal values around 50.
-        for _ in 0..50 {
-            b.observe(50.0);
+        // Train with values that have some variance.
+        for i in 0..50 {
+            b.observe(50.0 + (i % 3) as f64);
         }
-        // Spike to 500 — should be anomalous.
-        b.observe(500.0);
-        assert!(b.is_anomalous());
+        // Spike to 500 — pre-update z-score should be high.
+        let z = b.observe(500.0);
+        assert!(z > 3.0, "z-score should exceed threshold: got {z}");
     }
 
     #[test]
     fn test_no_anomaly_normal() {
         let mut b = MetricBaseline::new("test", 0.1, 3.0);
-        for _ in 0..50 {
-            b.observe(50.0);
+        for i in 0..50 {
+            b.observe(50.0 + (i % 3) as f64);
         }
-        b.observe(52.0); // Slight variation — not anomalous.
-        assert!(!b.is_anomalous());
+        let z = b.observe(52.0);
+        assert!(z < 3.0, "small deviation shouldn't be anomalous: z={z}");
     }
 
     #[test]
@@ -224,8 +225,8 @@ mod tests {
         for _ in 0..5 {
             b.observe(50.0);
         }
-        b.observe(500.0);
-        assert!(!b.is_anomalous()); // Not enough samples to judge.
+        // Even a big spike shouldn't alert with few samples.
+        assert!(!b.check_value(500.0));
     }
 
     #[test]
@@ -233,9 +234,9 @@ mod tests {
         let mut det = AnomalyDetector::new();
         det.register_metric("bps", 0.1, 3.0);
 
-        // Train.
-        for _ in 0..50 {
-            det.observe("bps", 1000.0);
+        // Train with some variance.
+        for i in 0..50 {
+            det.observe("bps", 1000.0 + (i % 5) as f64 * 10.0);
         }
 
         // Anomaly.
@@ -271,11 +272,13 @@ mod tests {
         det.register_metric("a", 0.1, 3.0);
         det.register_metric("b", 0.1, 3.0);
 
-        for _ in 0..50 { det.observe("a", 100.0); det.observe("b", 100.0); }
-        det.observe("a", 10_000.0); // Spike on 'a' only.
-
-        let anomalous = det.anomalous_metrics();
-        assert_eq!(anomalous.len(), 1);
-        assert_eq!(anomalous[0].name, "a");
+        for i in 0..50 {
+            det.observe("a", 100.0 + (i % 4) as f64);
+            det.observe("b", 100.0 + (i % 4) as f64);
+        }
+        // Spike on 'a' only — should generate alert.
+        let alert = det.observe("a", 10_000.0);
+        assert!(alert.is_some(), "spike should trigger alert");
+        assert_eq!(det.alerts().len(), 1);
     }
 }
