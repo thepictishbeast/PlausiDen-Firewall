@@ -112,7 +112,7 @@ mod tests {
     fn test_flood_detection() {
         let mut det = RstDetector::new();
         for _ in 0..25 {
-            det.record(make_event("attacker", "10.0.0.1", false));
+            det.record(make_event("10.99.99.99", "10.0.0.1", false));
         }
     }
 
@@ -137,8 +137,8 @@ mod tests {
     #[test]
     fn test_injection_detection() {
         let mut det = RstDetector::new();
-        det.record(make_event("attacker", "victim", true));
-        det.record(make_event("normal", "dest", false));
+        det.record(make_event("10.99.99.99", "10.99.99.1", true));
+        det.record(make_event("10.99.99.50", "10.99.99.200", false));
         let injections = det.detect_injection();
         assert_eq!(injections.len(), 1);
     }
@@ -147,9 +147,9 @@ mod tests {
     fn test_flooding_sources() {
         let mut det = RstDetector::new();
         for _ in 0..25 {
-            det.record(make_event("10.0.0.1", "target", false));
+            det.record(make_event("10.0.0.1", "10.99.99.100", false));
         }
-        det.record(make_event("10.0.0.2", "target", false));
+        det.record(make_event("10.0.0.2", "10.99.99.100", false));
         let flooding = det.flooding_sources();
         assert!(flooding.contains(&ip("10.0.0.1")));
         assert!(!flooding.contains(&ip("10.0.0.2")));
