@@ -19,6 +19,7 @@ pub mod dpi;
 pub mod ebpf;
 pub mod egress;
 pub mod monitor;
+pub mod network_zones;
 pub mod nftables;
 pub mod platform;
 pub mod rules;
