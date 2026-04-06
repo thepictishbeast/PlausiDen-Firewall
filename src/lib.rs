@@ -13,6 +13,7 @@ pub mod connection_limit;
 pub mod conntrack;
 pub mod dns_cache;
 pub mod dns_filter;
+pub mod dns_query_log;
 pub mod dns_over_https;
 pub mod dns_sinkhole;
 pub mod dns_tunnel;
