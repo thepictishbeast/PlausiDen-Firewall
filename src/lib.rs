@@ -6,6 +6,7 @@
 pub mod bandwidth;
 pub mod anomaly_detector;
 pub mod app_fingerprint;
+pub mod application_identity;
 pub mod connection_limit;
 pub mod conntrack;
 pub mod dns_sinkhole;
