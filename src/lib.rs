@@ -26,6 +26,7 @@ pub mod monitor;
 pub mod network_zones;
 pub mod nftables;
 pub mod platform;
+pub mod route_table;
 pub mod rules;
 pub mod stats;
 pub mod session_tracking;
