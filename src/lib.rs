@@ -30,6 +30,7 @@ pub mod platform;
 pub mod route_table;
 pub mod rules;
 pub mod stats;
+pub mod session_hijack;
 pub mod session_tracking;
 pub mod ssl_inspection;
 pub mod syn_flood;
