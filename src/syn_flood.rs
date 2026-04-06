@@ -146,7 +146,6 @@ mod tests {
     #[test]
     fn test_flood_high_rate() {
         let mut det = SynFloodDetector::new();
-        let src = ip("attacker.flood");
         let src = ip("10.0.0.1");
         // Simulate 2000 SYNs in window — well above rate threshold.
         for _ in 0..2000 {
