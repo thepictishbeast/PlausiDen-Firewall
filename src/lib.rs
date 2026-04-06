@@ -49,4 +49,5 @@ pub mod port_scan_detector;
 pub mod protocol_anomaly;
 pub mod protocol_filter;
 pub mod proxy_detect;
+pub mod qos_classifier;
 pub mod whitelist;
