@@ -23,6 +23,7 @@ pub mod dpi;
 pub mod ebpf;
 pub mod egress;
 pub mod monitor;
+pub mod nat_helper;
 pub mod network_zones;
 pub mod nftables;
 pub mod nftables_state;
