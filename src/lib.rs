@@ -26,6 +26,7 @@ pub mod threat_intel;
 pub mod traffic_shaper;
 pub mod geo_block;
 pub mod geo_ip;
+pub mod icmp_filter;
 pub mod ip_reputation;
 pub mod packet_log;
 pub mod port_knock;
