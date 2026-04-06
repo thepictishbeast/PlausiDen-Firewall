@@ -38,6 +38,7 @@ pub mod tcp_reset;
 pub mod threat_intel;
 pub mod traffic_shaper;
 pub mod geo_block;
+pub mod geo_routing;
 pub mod geo_ip;
 pub mod http_mime_filter;
 pub mod icmp_filter;
