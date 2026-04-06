@@ -37,6 +37,7 @@ pub mod geo_block;
 pub mod geo_ip;
 pub mod icmp_filter;
 pub mod ip_reputation;
+pub mod ipv6_filter;
 pub mod packet_log;
 pub mod payload_inspector;
 pub mod port_knock;
