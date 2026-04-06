@@ -8,6 +8,7 @@ pub mod app_fingerprint;
 pub mod connection_limit;
 pub mod conntrack;
 pub mod dns_sinkhole;
+pub mod dns_tunnel;
 pub mod doh_monitor;
 pub mod dpi;
 pub mod ebpf;
