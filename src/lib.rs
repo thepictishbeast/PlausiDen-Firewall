@@ -33,6 +33,7 @@ pub mod icmp_filter;
 pub mod ip_reputation;
 pub mod packet_log;
 pub mod port_knock;
+pub mod protocol_anomaly;
 pub mod protocol_filter;
 pub mod proxy_detect;
 pub mod whitelist;
