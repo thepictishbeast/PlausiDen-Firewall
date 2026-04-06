@@ -10,6 +10,7 @@ pub mod app_fingerprint;
 pub mod application_identity;
 pub mod connection_limit;
 pub mod conntrack;
+pub mod dns_cache;
 pub mod dns_over_https;
 pub mod dns_sinkhole;
 pub mod dns_tunnel;
