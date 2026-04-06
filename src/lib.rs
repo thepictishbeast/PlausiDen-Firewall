@@ -25,6 +25,7 @@ pub mod egress;
 pub mod monitor;
 pub mod network_zones;
 pub mod nftables;
+pub mod nftables_state;
 pub mod platform;
 pub mod route_table;
 pub mod rules;
