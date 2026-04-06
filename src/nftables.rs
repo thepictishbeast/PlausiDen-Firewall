@@ -52,6 +52,48 @@ impl NftablesBackend {
         NftRuleset { commands: cmds }
     }
 
+    /// Generate rate-limiting rules for brute-force protection.
+    pub fn generate_rate_limits(&self) -> Vec<String> {
+        let f = self.family_str();
+        let t = &self.table_name;
+        vec![
+            // SSH brute-force protection: 4 new connections per minute.
+            format!("add rule {f} {t} input tcp dport 22 ct state new meter ssh_meter {{ ip saddr limit rate 4/minute }} accept"),
+            format!("add rule {f} {t} input tcp dport 22 ct state new drop"),
+            // HTTP flood protection: 100 new connections per second.
+            format!("add rule {f} {t} input tcp dport {{ 80, 443 }} ct state new meter http_meter {{ ip saddr limit rate 100/second }} accept"),
+            format!("add rule {f} {t} input tcp dport {{ 80, 443 }} ct state new drop"),
+            // ICMP rate limit: 10 per second.
+            format!("add rule {f} {t} input icmp type echo-request limit rate 10/second accept"),
+            format!("add rule {f} {t} input icmp type echo-request drop"),
+        ]
+    }
+
+    /// Generate anti-spoofing rules.
+    pub fn generate_anti_spoof(&self) -> Vec<String> {
+        let f = self.family_str();
+        let t = &self.table_name;
+        vec![
+            // Drop packets with impossible source addresses.
+            format!("add rule {f} {t} input ip saddr 0.0.0.0/8 drop"),
+            format!("add rule {f} {t} input ip saddr 127.0.0.0/8 iif != lo drop"),
+            format!("add rule {f} {t} input ip saddr 169.254.0.0/16 drop"),
+            format!("add rule {f} {t} input ip saddr 224.0.0.0/4 drop"),
+            format!("add rule {f} {t} input ip saddr 240.0.0.0/4 drop"),
+            // Drop invalid packets.
+            format!("add rule {f} {t} input ct state invalid drop"),
+        ]
+    }
+
+    /// Generate a comprehensive hardened ruleset including rate limits and anti-spoof.
+    pub fn generate_hardened_ruleset(&self, ruleset: &RuleSet) -> NftRuleset {
+        let base = self.generate_ruleset(ruleset);
+        let mut cmds = base.commands;
+        cmds.extend(self.generate_anti_spoof());
+        cmds.extend(self.generate_rate_limits());
+        NftRuleset { commands: cmds }
+    }
+
     fn translate_rule(&self, rule: &FirewallRule) -> Option<String> {
         let f = self.family_str();
         let t = &self.table_name;
@@ -165,5 +207,44 @@ mod tests {
         }
         let nft = backend.generate_ruleset(&rs);
         assert!(nft.rule_count() >= 3);
+    }
+
+    #[test]
+    fn test_rate_limits() {
+        let backend = NftablesBackend::default();
+        let rules = backend.generate_rate_limits();
+        assert!(rules.iter().any(|r| r.contains("ssh_meter")));
+        assert!(rules.iter().any(|r| r.contains("http_meter")));
+        assert!(rules.iter().any(|r| r.contains("icmp")));
+    }
+
+    #[test]
+    fn test_anti_spoof() {
+        let backend = NftablesBackend::default();
+        let rules = backend.generate_anti_spoof();
+        assert!(rules.iter().any(|r| r.contains("0.0.0.0/8")));
+        assert!(rules.iter().any(|r| r.contains("169.254.0.0/16")));
+        assert!(rules.iter().any(|r| r.contains("invalid")));
+    }
+
+    #[test]
+    fn test_hardened_ruleset() {
+        let backend = NftablesBackend::default();
+        let mut rs = RuleSet::new();
+        rs.add_rule(make_rule(RuleAction::Allow, None, Some(443))).unwrap();
+        let nft = backend.generate_hardened_ruleset(&rs);
+        let script = nft.to_script();
+        // Should have base rules + anti-spoof + rate limits.
+        assert!(script.contains("flush table"));
+        assert!(script.contains("0.0.0.0/8"));
+        assert!(script.contains("ssh_meter"));
+        assert!(script.contains("443"));
+    }
+
+    #[test]
+    fn test_inet6_family() {
+        let backend = NftablesBackend::new("plausiden", TableFamily::Inet6);
+        let nft = backend.generate_ruleset(&RuleSet::new());
+        assert!(nft.to_script().contains("ip6"));
     }
 }
