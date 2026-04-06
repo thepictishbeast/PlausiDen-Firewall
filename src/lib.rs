@@ -4,6 +4,7 @@
 //! with cross-platform support planned.
 
 pub mod bandwidth;
+pub mod anomaly_detector;
 pub mod app_fingerprint;
 pub mod connection_limit;
 pub mod conntrack;
