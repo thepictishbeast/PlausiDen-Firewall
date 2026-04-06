@@ -16,6 +16,7 @@ Single crate with the following modules:
 - `egress` — Per-application egress filtering with default-deny (IMPLEMENTED)
 - `conntrack` — Stateful connection tracking with traffic counters, state machine, and analytics (IMPLEMENTED)
 - `stats` — Aggregated traffic statistics for the firewall dashboard with text/JSON rendering (IMPLEMENTED)
+- `packet_log` — Bounded ring-buffer packet logger with search, filtering, blocked-only mode, and pcap-style export (IMPLEMENTED)
 - `dpi` — Deep packet inspection engine (SCAFFOLD)
 - `ebpf` — eBPF kernel-level filtering integration (SCAFFOLD)
 - `nftables` — nftables backend for netfilter rules (SCAFFOLD)
