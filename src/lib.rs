@@ -5,6 +5,7 @@
 
 pub mod bandwidth;
 pub mod app_fingerprint;
+pub mod connection_limit;
 pub mod conntrack;
 pub mod dns_sinkhole;
 pub mod doh_monitor;
