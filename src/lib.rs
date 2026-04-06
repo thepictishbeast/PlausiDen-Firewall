@@ -40,6 +40,7 @@ pub mod ip_reputation;
 pub mod packet_log;
 pub mod payload_inspector;
 pub mod port_knock;
+pub mod port_scan_detector;
 pub mod protocol_anomaly;
 pub mod protocol_filter;
 pub mod proxy_detect;
