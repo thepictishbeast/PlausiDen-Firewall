@@ -18,4 +18,5 @@ pub mod rules;
 pub mod stats;
 pub mod threat_intel;
 pub mod geo_ip;
+pub mod ip_reputation;
 pub mod packet_log;
