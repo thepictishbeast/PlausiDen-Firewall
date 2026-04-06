@@ -17,6 +17,7 @@ pub mod platform;
 pub mod rules;
 pub mod stats;
 pub mod session_tracking;
+pub mod ssl_inspection;
 pub mod threat_intel;
 pub mod geo_ip;
 pub mod ip_reputation;
