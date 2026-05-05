@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 license = "BSL-1.1"
 description = "Application-aware firewall with DPI, egress filtering, DNS sinkholing"
-repository = "https://github.com/redcaptian1917/PlausiDen-Firewall"
+repository = "https://github.com/thepictishbeast/PlausiDen-Firewall"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
